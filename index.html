@@ -2,258 +2,256 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Greg & Bek — Budget Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Greg & Bek</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- WHO ARE YOU -->
-  <div id="user-screen" class="user-screen">
-    <div class="notebook-cover">
-      <div class="cover-lines"></div>
-      <div class="cover-content">
-        <div class="cover-title">Budget Tracker</div>
-        <div class="cover-subtitle">Greg & Bek · <span id="cover-year"></span></div>
-        <div class="cover-prompt">Who's opening the book?</div>
-        <div class="user-btns">
-          <button class="user-btn greg-btn" onclick="setUser('greg')">
-            <span class="user-avatar">G</span>
-            <span>Greg</span>
-          </button>
-          <button class="user-btn bek-btn" onclick="setUser('bek')">
-            <span class="user-avatar">B</span>
-            <span>Bek</span>
-          </button>
-        </div>
-      </div>
+<div id="user-screen" class="splash">
+  <div class="splash-inner">
+    <div class="splash-logo">
+      <div class="logo-mark">G<span>&</span>B</div>
+    </div>
+    <h1 class="splash-title">Budget</h1>
+    <p class="splash-sub">Who's logging in?</p>
+    <div class="splash-btns">
+      <button class="splash-btn greg" onclick="setUser('greg')">
+        <div class="avatar">G</div>
+        <span>Greg</span>
+      </button>
+      <button class="splash-btn bek" onclick="setUser('bek')">
+        <div class="avatar">B</div>
+        <span>Bek</span>
+      </button>
     </div>
   </div>
+</div>
 
-  <!-- MAIN APP -->
-  <div id="app" class="app hidden">
+<div id="app" class="app hidden">
 
-    <header class="app-header">
-      <div class="header-spiral">
-        <div class="spiral-holes">
-          <div class="hole"></div><div class="hole"></div><div class="hole"></div>
-          <div class="hole"></div><div class="hole"></div><div class="hole"></div>
-          <div class="hole"></div><div class="hole"></div>
-        </div>
-      </div>
-      <div class="header-body">
-        <div class="header-top">
-          <div>
-            <div id="fn-label" class="fn-label"></div>
-            <div class="fn-sub">
-              Viewing as: <span id="active-user-label" class="user-tag"></span>
-              <button class="switch-user-btn" onclick="switchUser()">switch</button>
-            </div>
-          </div>
-          <div class="header-actions">
-            <button class="nb-btn" onclick="changeFN(-1)">&#8592;</button>
-            <button class="nb-btn" onclick="changeFN(1)">&#8594;</button>
-            <button class="nb-btn save-btn" onclick="saveFortnight()">close fortnight ✓</button>
-          </div>
-        </div>
-        <nav class="tab-bar">
-          <button class="tab active" onclick="showTab('overview')">Overview</button>
-          <button class="tab" onclick="showTab('spending')">Spending</button>
-          <button class="tab" onclick="showTab('goals')">Goals</button>
-          <button class="tab" onclick="showTab('stats')">Stats</button>
-        </nav>
-      </div>
-    </header>
-
-    <main class="page-content">
-
-      <!-- red margin line -->
-      <div class="margin-line"></div>
-
-      <!-- OVERVIEW -->
-      <div id="tab-overview" class="tab-pane active">
-        <div class="page-heading">This fortnight</div>
-
-        <div class="metrics-row">
-          <div class="metric-bubble">
-            <div class="metric-val" id="ov-income">—</div>
-            <div class="metric-lbl">income</div>
-          </div>
-          <div class="metric-bubble">
-            <div class="metric-val warn" id="ov-spent">—</div>
-            <div class="metric-lbl">spent</div>
-          </div>
-          <div class="metric-bubble">
-            <div class="metric-val good" id="ov-saved">—</div>
-            <div class="metric-lbl">saved</div>
-          </div>
-        </div>
-
-        <div class="nb-card">
-          <div class="nb-card-title">Income</div>
-          <div class="nb-row"><span class="nb-row-label">Greg take-home</span><span class="nb-row-val">$5,378</span></div>
-          <div class="nb-row"><span class="nb-row-label">Bek take-home</span><span class="nb-row-val">$3,365</span></div>
-          <div class="nb-row">
-            <span class="nb-row-label">Bek overtime</span>
-            <input type="number" id="ov-ot" value="0" min="0" class="nb-inline-input" onchange="recalc()" />
-          </div>
-          <div class="nb-row nb-total">
-            <span>Total</span>
-            <span id="ov-total-income">—</span>
-          </div>
-        </div>
-
-        <div class="nb-card">
-          <div class="nb-card-title">Money going out</div>
-          <div class="nb-row"><span class="nb-row-label">Mortgage (P&I + extra)</span><span class="nb-row-val">$5,250</span></div>
-          <div id="ov-cat-summary"></div>
-          <div class="nb-row nb-total">
-            <span>Remaining to save</span>
-            <span id="ov-remaining">—</span>
-          </div>
-        </div>
-
-        <div class="nb-card">
-          <div class="nb-card-title">Goals progress</div>
-          <div id="ov-goals-mini"></div>
-        </div>
-
-        <div class="nb-card" id="ov-activity-card">
-          <div class="nb-card-title">Recent activity</div>
-          <div id="ov-recent"></div>
-        </div>
-      </div>
-
-      <!-- SPENDING -->
-      <div id="tab-spending" class="tab-pane">
-        <div class="page-heading">Spending</div>
-        <div class="who-added-row">
-          <span class="who-label">Logging as:</span>
-          <span id="spending-user-tag" class="user-tag"></span>
-        </div>
-        <button class="nb-add-btn" onclick="openTxnModal()">+ add a purchase</button>
-        <div id="cat-list"></div>
-      </div>
-
-      <!-- GOALS -->
-      <div id="tab-goals" class="tab-pane">
-        <div class="page-heading">Savings goals</div>
-        <div id="goals-list"></div>
-        <button class="nb-add-btn" onclick="openGoalModal()">+ add a goal</button>
-        <div class="nb-card" style="margin-top:16px;">
-          <div class="nb-card-title">Fortnightly contributions</div>
-          <div id="goal-contrib-summary"></div>
-        </div>
-      </div>
-
-      <!-- STATS -->
-      <div id="tab-stats" class="tab-pane">
-        <div class="page-heading">The numbers</div>
-
-        <div class="metrics-row metrics-row-2">
-          <div class="metric-bubble"><div class="metric-val" id="st-avg-saved">—</div><div class="metric-lbl">avg saved/fn</div></div>
-          <div class="metric-bubble"><div class="metric-val good" id="st-total-saved">—</div><div class="metric-lbl">total saved</div></div>
-          <div class="metric-bubble"><div class="metric-val" id="st-best">—</div><div class="metric-lbl">best fortnight</div></div>
-          <div class="metric-bubble"><div class="metric-val" id="st-count">—</div><div class="metric-lbl">fns tracked</div></div>
-        </div>
-
-        <div class="nb-card">
-          <div class="nb-card-title">Spending vs budget (this fortnight)</div>
-          <div id="st-cat-bars"></div>
-        </div>
-
-        <div class="nb-card">
-          <div class="nb-card-title">Category breakdown</div>
-          <div class="chart-wrap" style="height:260px;"><canvas id="catChart"></canvas></div>
-        </div>
-
-        <div class="nb-card">
-          <div class="nb-card-title">Savings over time</div>
-          <div class="chart-wrap" style="height:200px;"><canvas id="histChart"></canvas></div>
-        </div>
-
-        <div class="nb-card">
-          <div class="nb-card-title">Who's been spending?</div>
-          <div id="st-who"></div>
-        </div>
-
-        <div class="nb-card">
-          <div class="nb-card-title">All-time top categories</div>
-          <div id="st-top-cats"></div>
-        </div>
-      </div>
-
-    </main>
-  </div>
-
-  <!-- ADD PURCHASE MODAL -->
-  <div class="modal-backdrop" id="txn-modal">
-    <div class="nb-modal">
-      <div class="modal-title">Add purchase</div>
-      <label class="nb-label">What did you buy?</label>
-      <input type="text" id="txn-desc" class="nb-input" placeholder="e.g. dinner at the local" />
-      <label class="nb-label">How much? ($)</label>
-      <input type="number" id="txn-amount" class="nb-input" placeholder="0" min="0" step="0.01" />
-      <label class="nb-label">Category</label>
-      <select id="txn-cat" class="nb-input"></select>
-      <label class="nb-label">Date</label>
-      <input type="date" id="txn-date" class="nb-input" />
-      <div class="modal-note" id="txn-who-note"></div>
-      <div class="modal-btns">
-        <button class="btn-cancel" onclick="closeModal('txn-modal')">cancel</button>
-        <button class="btn-primary" onclick="addTxn()">add it</button>
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-fn" id="fn-label"></div>
+      <div class="topbar-sub">
+        <span id="active-user-pill" class="pill"></span>
+        <button class="switch-btn" onclick="switchUser()">switch</button>
       </div>
     </div>
-  </div>
+    <div class="topbar-right">
+      <button class="icon-btn" onclick="changeFN(-1)" title="Previous">&#8592;</button>
+      <button class="icon-btn" onclick="changeFN(1)" title="Next">&#8594;</button>
+      <button class="icon-btn accent-btn" onclick="saveFortnight()" title="Close fortnight">&#10003;</button>
+    </div>
+  </header>
 
-  <!-- ADD GOAL MODAL -->
-  <div class="modal-backdrop" id="goal-modal">
-    <div class="nb-modal">
-      <div class="modal-title">New savings goal</div>
-      <label class="nb-label">What are you saving for?</label>
-      <input type="text" id="gm-name" class="nb-input" placeholder="e.g. Japan trip" />
-      <label class="nb-label">Target amount ($)</label>
-      <input type="number" id="gm-target" class="nb-input" placeholder="5000" />
-      <label class="nb-label">Already saved ($)</label>
-      <input type="number" id="gm-saved" class="nb-input" placeholder="0" value="0" />
-      <label class="nb-label">Fortnight contribution ($)</label>
-      <input type="number" id="gm-contrib" class="nb-input" placeholder="200" />
-      <label class="nb-label">Target date</label>
-      <input type="month" id="gm-date" class="nb-input" />
-      <label class="nb-label">Icon</label>
-      <select id="gm-emoji" class="nb-input">
-        <option value="✈">✈ Holiday</option>
-        <option value="🏠">🏠 Home</option>
-        <option value="🚗">🚗 Car</option>
-        <option value="🎉">🎉 Event</option>
-        <option value="🏖">🏖 Beach</option>
-        <option value="💰">💰 Savings</option>
-        <option value="🎓">🎓 Education</option>
-        <option value="📦">📦 Other</option>
-      </select>
-      <div class="modal-btns">
-        <button class="btn-cancel" onclick="closeModal('goal-modal')">cancel</button>
-        <button class="btn-primary" onclick="addGoal()">add goal</button>
+  <main class="content">
+    <div id="tab-overview" class="pane active">
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-val" id="ov-income">—</div><div class="kpi-lbl">income</div></div>
+        <div class="kpi"><div class="kpi-val muted" id="ov-spent">—</div><div class="kpi-lbl">spent</div></div>
+        <div class="kpi"><div class="kpi-val" id="ov-saved">—</div><div class="kpi-lbl">saved</div></div>
+      </div>
+
+      <div class="section-head">Income</div>
+      <div class="card">
+        <div class="row"><span class="lbl">Greg take-home</span><span class="val">$5,378</span></div>
+        <div class="row"><span class="lbl">Bek take-home</span><span class="val">$3,365</span></div>
+        <div class="row"><span class="lbl">Bek overtime</span><input type="number" id="ov-ot" value="0" min="0" class="inline-inp" onchange="recalc()" /></div>
+        <div class="row total-row"><span>Total</span><span id="ov-total-income">—</span></div>
+      </div>
+
+      <div class="section-head">Outgoings</div>
+      <div class="card">
+        <div class="row"><span class="lbl">Mortgage</span><span class="val">$5,250</span></div>
+        <div id="ov-cat-rows"></div>
+        <div class="row total-row"><span>Remaining</span><span id="ov-remaining">—</span></div>
+      </div>
+
+      <div class="section-head">Goals</div>
+      <div class="card" id="ov-goals-card"><div id="ov-goals-mini"></div></div>
+
+      <div class="section-head">Recent</div>
+      <div class="card"><div id="ov-recent"></div></div>
+    </div>
+
+    <div id="tab-spending" class="pane">
+      <div class="pane-header">
+        <div>
+          <div class="pane-title">Spending</div>
+          <div class="pane-sub">Logging as <span id="spending-pill" class="pill"></span></div>
+        </div>
+        <button class="fab-sm" onclick="openTxnModal()">+ Add</button>
+      </div>
+      <div id="cat-list"></div>
+    </div>
+
+    <div id="tab-goals" class="pane">
+      <div class="pane-header">
+        <div class="pane-title">Goals</div>
+        <button class="fab-sm" onclick="openGoalModal()">+ Add</button>
+      </div>
+      <div id="goals-list"></div>
+      <div class="section-head" style="margin-top:8px;">Contributions summary</div>
+      <div class="card"><div id="goal-contrib-summary"></div></div>
+    </div>
+
+    <div id="tab-stats" class="pane">
+      <div class="pane-title" style="margin-bottom:16px;">Stats</div>
+      <div class="kpi-row kpi-row-2">
+        <div class="kpi"><div class="kpi-val" id="st-avg">—</div><div class="kpi-lbl">avg saved/fn</div></div>
+        <div class="kpi"><div class="kpi-val good" id="st-total">—</div><div class="kpi-lbl">total saved</div></div>
+        <div class="kpi"><div class="kpi-val" id="st-best">—</div><div class="kpi-lbl">best fn</div></div>
+        <div class="kpi"><div class="kpi-val" id="st-count">—</div><div class="kpi-lbl">fns tracked</div></div>
+      </div>
+      <div class="section-head">This fortnight</div>
+      <div class="card"><div id="st-fn-bars"></div></div>
+      <div class="section-head">Spend vs budget</div>
+      <div class="card"><div style="position:relative;height:240px;"><canvas id="catChart"></canvas></div></div>
+      <div class="section-head">Savings history</div>
+      <div class="card"><div style="position:relative;height:180px;"><canvas id="histChart"></canvas></div></div>
+      <div class="section-head">Who's spending?</div>
+      <div class="card"><div id="st-who"></div></div>
+      <div class="section-head">All-time categories</div>
+      <div class="card"><div id="st-alltime"></div></div>
+    </div>
+
+    <div id="tab-settings" class="pane">
+      <div class="pane-title" style="margin-bottom:16px;">Settings</div>
+
+      <div class="section-head">Budget categories</div>
+      <div class="settings-info">Tap a category to edit its budget or name. Toggle to hide it from spending.</div>
+      <div id="settings-cats"></div>
+      <button class="add-cat-btn" onclick="openAddCatModal()">+ Add category</button>
+
+      <div class="section-head" style="margin-top:24px;">Income</div>
+      <div class="card">
+        <div class="row"><span class="lbl">Greg fortnightly</span><input type="number" id="set-greg" class="inline-inp" onchange="saveSettings()" /></div>
+        <div class="row"><span class="lbl">Bek fortnightly</span><input type="number" id="set-bek" class="inline-inp" onchange="saveSettings()" /></div>
+        <div class="row"><span class="lbl">Mortgage payment</span><input type="number" id="set-mortgage" class="inline-inp" onchange="saveSettings()" /></div>
+      </div>
+
+      <div class="section-head" style="margin-top:24px;">Data</div>
+      <div class="card">
+        <button class="danger-btn" onclick="resetData()">Clear all data &amp; start fresh</button>
       </div>
     </div>
-  </div>
+  </main>
 
-  <!-- ADD TO GOAL MODAL -->
-  <div class="modal-backdrop" id="addgoal-modal">
-    <div class="nb-modal">
-      <div class="modal-title" id="agm-title">Add to goal</div>
-      <label class="nb-label">Amount to add ($)</label>
-      <input type="number" id="agm-amount" class="nb-input" placeholder="0" min="0" />
-      <div class="modal-btns">
-        <button class="btn-cancel" onclick="closeModal('addgoal-modal')">cancel</button>
-        <button class="btn-primary" onclick="confirmAddToGoal()">add it</button>
-      </div>
+  <nav class="bottom-nav">
+    <button class="nav-tab active" onclick="showTab('overview')"><span class="nav-icon">◉</span><span class="nav-lbl">Overview</span></button>
+    <button class="nav-tab" onclick="showTab('spending')"><span class="nav-icon">◈</span><span class="nav-lbl">Spending</span></button>
+    <button class="nav-tab" onclick="showTab('goals')"><span class="nav-icon">◎</span><span class="nav-lbl">Goals</span></button>
+    <button class="nav-tab" onclick="showTab('stats')"><span class="nav-icon">◫</span><span class="nav-lbl">Stats</span></button>
+    <button class="nav-tab" onclick="showTab('settings')"><span class="nav-icon">◧</span><span class="nav-lbl">Settings</span></button>
+  </nav>
+</div>
+
+<!-- ADD PURCHASE -->
+<div class="sheet-backdrop" id="txn-modal">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Add purchase</div>
+    <label class="field-label">What?</label>
+    <input type="text" id="txn-desc" class="field" placeholder="e.g. Woolworths run" />
+    <label class="field-label">Amount ($)</label>
+    <input type="number" id="txn-amount" class="field" placeholder="0.00" min="0" step="0.01" inputmode="decimal" />
+    <label class="field-label">Category</label>
+    <select id="txn-cat" class="field"></select>
+    <label class="field-label">Date</label>
+    <input type="date" id="txn-date" class="field" />
+    <div class="sheet-note" id="txn-who-note"></div>
+    <div class="sheet-btns">
+      <button class="btn-ghost" onclick="closeSheet('txn-modal')">Cancel</button>
+      <button class="btn-solid" onclick="addTxn()">Add it</button>
     </div>
   </div>
+</div>
 
-  <script src="app.js"></script>
+<!-- ADD GOAL -->
+<div class="sheet-backdrop" id="goal-modal">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">New goal</div>
+    <label class="field-label">Name</label>
+    <input type="text" id="gm-name" class="field" placeholder="e.g. Japan trip" />
+    <label class="field-label">Target ($)</label>
+    <input type="number" id="gm-target" class="field" placeholder="5000" inputmode="numeric" />
+    <label class="field-label">Already saved ($)</label>
+    <input type="number" id="gm-saved" class="field" value="0" inputmode="numeric" />
+    <label class="field-label">Fortnight contribution ($)</label>
+    <input type="number" id="gm-contrib" class="field" placeholder="200" inputmode="numeric" />
+    <label class="field-label">Target date</label>
+    <input type="month" id="gm-date" class="field" />
+    <label class="field-label">Icon</label>
+    <select id="gm-emoji" class="field">
+      <option value="✈">✈ Holiday</option><option value="🏠">🏠 Home</option>
+      <option value="🚗">🚗 Car</option><option value="🎉">🎉 Event</option>
+      <option value="🏖">🏖 Beach</option><option value="💰">💰 Savings</option>
+      <option value="🎓">🎓 Education</option><option value="📦">📦 Other</option>
+    </select>
+    <div class="sheet-btns">
+      <button class="btn-ghost" onclick="closeSheet('goal-modal')">Cancel</button>
+      <button class="btn-solid" onclick="addGoal()">Add goal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TO GOAL -->
+<div class="sheet-backdrop" id="addgoal-modal">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="agm-title">Add to goal</div>
+    <label class="field-label">Amount ($)</label>
+    <input type="number" id="agm-amount" class="field" placeholder="0" inputmode="numeric" />
+    <div class="sheet-btns">
+      <button class="btn-ghost" onclick="closeSheet('addgoal-modal')">Cancel</button>
+      <button class="btn-solid" onclick="confirmAddToGoal()">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT CATEGORY -->
+<div class="sheet-backdrop" id="editcat-modal">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Edit category</div>
+    <input type="hidden" id="ec-id" />
+    <label class="field-label">Name</label>
+    <input type="text" id="ec-name" class="field" />
+    <label class="field-label">Fortnightly budget ($)</label>
+    <input type="number" id="ec-budget" class="field" placeholder="0 = no budget" inputmode="numeric" />
+    <label class="field-label">Icon (emoji)</label>
+    <input type="text" id="ec-icon" class="field" maxlength="2" />
+    <div class="sheet-btns">
+      <button class="btn-ghost" onclick="closeSheet('editcat-modal')">Cancel</button>
+      <button class="btn-solid" onclick="saveCatEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD CATEGORY -->
+<div class="sheet-backdrop" id="addcat-modal">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">New category</div>
+    <label class="field-label">Name</label>
+    <input type="text" id="ac-name" class="field" placeholder="e.g. Kids" />
+    <label class="field-label">Fortnightly budget ($)</label>
+    <input type="number" id="ac-budget" class="field" placeholder="0" inputmode="numeric" />
+    <label class="field-label">Icon (emoji)</label>
+    <input type="text" id="ac-icon" class="field" placeholder="📦" maxlength="2" />
+    <div class="sheet-btns">
+      <button class="btn-ghost" onclick="closeSheet('addcat-modal')">Cancel</button>
+      <button class="btn-solid" onclick="addCat()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
