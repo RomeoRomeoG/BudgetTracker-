@@ -156,22 +156,32 @@ function renderOverview() {
   remEl.style.color = sav>=0?'var(--good)':'var(--danger)';
 
   // Rollover balances panel
+  // effectiveBudget(id) = base + runningBalance (what's available THIS fortnight)
+  // After close: newRunningBalance = effectiveBudget - spent = eff - spent
   const rc = rolloverCats();
   $('ov-rollover-rows').innerHTML = rc.length===0
     ? `<div style="padding:14px;font-size:13px;color:var(--text3);">Enable rollover on categories in Settings.</div>`
     : rc.map(c => {
-        const surplus = S.catSurplus[c.id]||0;
-        const spent   = catSpend(c.id, txns);
-        const eff     = effectiveBudget(c.id);
-        const projectedSurplus = Math.max(0, eff - spent);
+        const carried  = S.catSurplus[c.id]||0;   // balance brought forward from last fn
+        const base     = c.budget||0;              // this fortnight's base budget
+        const eff      = effectiveBudget(c.id);    // = carried + base = total available
+        const spent    = catSpend(c.id, txns);     // spent so far this fn
+        const afterClose = eff - spent;            // what will roll to next fn
+        const isOver   = afterClose < 0;
         return `<div class="rollover-row">
           <div class="rollover-row-icon">${c.icon}</div>
           <div class="rollover-row-body">
             <div class="rollover-row-name">${c.name}</div>
-            <div class="rollover-row-meta">Base ${fmt(c.budget||0)}/fn · After this fn: ~${fmt(projectedSurplus)}</div>
+            <div class="rollover-row-meta">
+              Available: ${fmt(eff)} (${fmt(carried>=0?'+'+Math.round(carried):Math.round(carried))} carried + ${fmt(base)} budget)
+              · Spent: ${fmt(spent)}
+            </div>
           </div>
           <div class="rollover-row-right">
-            <div class="rollover-bal ${surplus<0?'negative':''}">${fmt(surplus)}</div>
+            <div class="rollover-bal ${isOver?'negative':''}">
+              ${fmt(afterClose)}
+              <div style="font-size:10px;color:var(--text3);font-family:var(--mono);">after close</div>
+            </div>
             <button class="rollover-adj-btn" onclick="openAdjustRollover('${c.id}')">adjust</button>
           </div>
         </div>`;
@@ -480,7 +490,9 @@ function openAdjustRollover(catId) {
   const c = catById(catId);
   S.adjustingCatId = catId;
   $('ra-title').textContent = 'Adjust: '+c.name;
-  $('ra-desc').textContent = `Current rollover balance: ${fmt(S.catSurplus[catId]||0)}. Use this to correct the balance — for example, if you paid a bill from a different account or need to reset after a large expense.`;
+  const surp = S.catSurplus[catId]||0;
+  const c2   = catById(catId);
+  $('ra-desc').textContent = `Running balance: ${fmt(surp)} ${surp>=0?'(saved up)':'(overspent)'}. Each fortnight this grows by $${c2.budget||0} minus whatever you spend. Adjust it here if it needs correcting — e.g. you paid a bill from a different account.`;
   $('ra-amount').value = S.catSurplus[catId]||0;
   openSheet('rollover-adjust-modal');
 }
@@ -493,11 +505,29 @@ function confirmAdjustRollover() {
 
 /* ── FORTNIGHT CLOSE ─────────────────────────────────── */
 function saveFortnight() {
-  if (!confirm('Close this fortnight?\n\nRollover categories will carry their unspent balances forward.')) return;
+  // Build rollover summary for confirm dialog
+  const txns = fnTxns();
+  const rc = rolloverCats();
+  let rolloverMsg = '';
+  if (rc.length > 0) {
+    rolloverMsg = '\n\nRollover balances after close:';
+    rc.forEach(c => {
+      const eff     = effectiveBudget(c.id);
+      const spent   = catSpend(c.id, txns);
+      const newBal  = eff - spent;
+      const sign    = newBal >= 0 ? '+' : '';
+      rolloverMsg  += `\n  ${c.icon} ${c.name}: ${sign}$${Math.round(Math.abs(newBal)).toLocaleString('en-AU')} ${newBal<0?'(overspent)':'(carried forward)'}`;
+    });
+  }
+
+  if (!confirm('Close this fortnight?' + rolloverMsg)) return;
 
   const inc=income(), sp=totalSpend(), sav=inc-S.settings.mortgage-sp;
 
-  // Compute rollover BEFORE advancing
+  // computeRollover: for each rollover cat, new running balance = effectiveBudget - spent
+  // effectiveBudget = old running balance + base budget
+  // So: new balance = (old balance + base) - spent
+  // This means: if you had $100 carried, base is $200, spent $50 → new balance = $250
   computeRollover();
 
   S.history.push({ label:getFNLabel(S.fn), income:inc, expenses:S.settings.mortgage+sp, saved:sav, fn:S.fn });
