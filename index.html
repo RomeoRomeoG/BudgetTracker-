@@ -13,26 +13,17 @@
 
 <div id="user-screen" class="splash">
   <div class="splash-inner">
-    <div class="splash-logo">
-      <div class="logo-mark">G<span>&</span>B</div>
-    </div>
+    <div class="splash-logo"><div class="logo-mark">G<span>&</span>B</div></div>
     <h1 class="splash-title">Budget</h1>
     <p class="splash-sub">Who's logging in?</p>
     <div class="splash-btns">
-      <button class="splash-btn greg" onclick="setUser('greg')">
-        <div class="avatar">G</div>
-        <span>Greg</span>
-      </button>
-      <button class="splash-btn bek" onclick="setUser('bek')">
-        <div class="avatar">B</div>
-        <span>Bek</span>
-      </button>
+      <button class="splash-btn greg" onclick="setUser('greg')"><div class="avatar">G</div><span>Greg</span></button>
+      <button class="splash-btn bek" onclick="setUser('bek')"><div class="avatar">B</div><span>Bek</span></button>
     </div>
   </div>
 </div>
 
 <div id="app" class="app hidden">
-
   <header class="topbar">
     <div class="topbar-left">
       <div class="topbar-fn" id="fn-label"></div>
@@ -42,20 +33,21 @@
       </div>
     </div>
     <div class="topbar-right">
-      <button class="icon-btn" onclick="changeFN(-1)" title="Previous">&#8592;</button>
-      <button class="icon-btn" onclick="changeFN(1)" title="Next">&#8594;</button>
+      <button class="icon-btn" onclick="changeFN(-1)">&#8592;</button>
+      <button class="icon-btn" onclick="changeFN(1)">&#8594;</button>
       <button class="icon-btn accent-btn" onclick="saveFortnight()" title="Close fortnight">&#10003;</button>
     </div>
   </header>
 
   <main class="content">
+
+    <!-- OVERVIEW -->
     <div id="tab-overview" class="pane active">
       <div class="kpi-row">
         <div class="kpi"><div class="kpi-val" id="ov-income">—</div><div class="kpi-lbl">income</div></div>
         <div class="kpi"><div class="kpi-val muted" id="ov-spent">—</div><div class="kpi-lbl">spent</div></div>
         <div class="kpi"><div class="kpi-val" id="ov-saved">—</div><div class="kpi-lbl">saved</div></div>
       </div>
-
       <div class="section-head">Income</div>
       <div class="card">
         <div class="row"><span class="lbl">Greg take-home</span><span class="val">$5,378</span></div>
@@ -63,21 +55,21 @@
         <div class="row"><span class="lbl">Bek overtime</span><input type="number" id="ov-ot" value="0" min="0" class="inline-inp" onchange="recalc()" /></div>
         <div class="row total-row"><span>Total</span><span id="ov-total-income">—</span></div>
       </div>
-
       <div class="section-head">Outgoings</div>
       <div class="card">
         <div class="row"><span class="lbl">Mortgage</span><span class="val">$5,250</span></div>
         <div id="ov-cat-rows"></div>
         <div class="row total-row"><span>Remaining</span><span id="ov-remaining">—</span></div>
       </div>
-
+      <div class="section-head">Rollover balances</div>
+      <div class="card" id="ov-rollover-card"><div id="ov-rollover-rows"><div style="padding:14px;font-size:13px;color:var(--text3);">No rollover categories set up yet.</div></div></div>
       <div class="section-head">Goals</div>
-      <div class="card" id="ov-goals-card"><div id="ov-goals-mini"></div></div>
-
+      <div class="card"><div id="ov-goals-mini"></div></div>
       <div class="section-head">Recent</div>
       <div class="card"><div id="ov-recent"></div></div>
     </div>
 
+    <!-- SPENDING -->
     <div id="tab-spending" class="pane">
       <div class="pane-header">
         <div>
@@ -89,6 +81,7 @@
       <div id="cat-list"></div>
     </div>
 
+    <!-- GOALS -->
     <div id="tab-goals" class="pane">
       <div class="pane-header">
         <div class="pane-title">Goals</div>
@@ -99,6 +92,7 @@
       <div class="card"><div id="goal-contrib-summary"></div></div>
     </div>
 
+    <!-- STATS -->
     <div id="tab-stats" class="pane">
       <div class="pane-title" style="margin-bottom:16px;">Stats</div>
       <div class="kpi-row kpi-row-2">
@@ -119,15 +113,16 @@
       <div class="card"><div id="st-alltime"></div></div>
     </div>
 
+    <!-- SETTINGS -->
     <div id="tab-settings" class="pane">
-      <div class="pane-title" style="margin-bottom:16px;">Settings</div>
+      <div class="pane-title" style="margin-bottom:4px;">Settings</div>
 
       <div class="section-head">Budget categories</div>
-      <div class="settings-info">Tap a category to edit its budget or name. Toggle to hide it from spending.</div>
+      <div class="settings-info">Edit budget, name or icon. Toggle <strong>active</strong> to show/hide. Toggle <strong>rollover</strong> to carry unused budget forward each fortnight — great for irregular bills like rates, insurance, rego.</div>
       <div id="settings-cats"></div>
       <button class="add-cat-btn" onclick="openAddCatModal()">+ Add category</button>
 
-      <div class="section-head" style="margin-top:24px;">Income</div>
+      <div class="section-head" style="margin-top:24px;">Income & mortgage</div>
       <div class="card">
         <div class="row"><span class="lbl">Greg fortnightly</span><input type="number" id="set-greg" class="inline-inp" onchange="saveSettings()" /></div>
         <div class="row"><span class="lbl">Bek fortnightly</span><input type="number" id="set-bek" class="inline-inp" onchange="saveSettings()" /></div>
@@ -139,6 +134,7 @@
         <button class="danger-btn" onclick="resetData()">Clear all data &amp; start fresh</button>
       </div>
     </div>
+
   </main>
 
   <nav class="bottom-nav">
@@ -160,9 +156,20 @@
     <label class="field-label">Amount ($)</label>
     <input type="number" id="txn-amount" class="field" placeholder="0.00" min="0" step="0.01" inputmode="decimal" />
     <label class="field-label">Category</label>
-    <select id="txn-cat" class="field"></select>
+    <select id="txn-cat" class="field" onchange="checkRolloverCat()"></select>
+    <div id="txn-rollover-hint" class="rollover-hint hidden">
+      <span class="rollover-badge">Rollover</span> Available balance: <strong id="txn-rollover-avail"></strong>
+    </div>
     <label class="field-label">Date</label>
     <input type="date" id="txn-date" class="field" />
+    <label class="field-label" id="split-label" style="display:none;">Split across fortnights?</label>
+    <div id="split-row" style="display:none;" class="split-row">
+      <button type="button" class="split-btn" onclick="setSplit(1)">This fn only</button>
+      <button type="button" class="split-btn" onclick="setSplit(2)">Split 2</button>
+      <button type="button" class="split-btn" onclick="setSplit(3)">Split 3</button>
+      <button type="button" class="split-btn" onclick="setSplit(4)">Split 4</button>
+    </div>
+    <div id="split-preview" class="split-preview hidden"></div>
     <div class="sheet-note" id="txn-who-note"></div>
     <div class="sheet-btns">
       <button class="btn-ghost" onclick="closeSheet('txn-modal')">Cancel</button>
@@ -176,16 +183,11 @@
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">New goal</div>
-    <label class="field-label">Name</label>
-    <input type="text" id="gm-name" class="field" placeholder="e.g. Japan trip" />
-    <label class="field-label">Target ($)</label>
-    <input type="number" id="gm-target" class="field" placeholder="5000" inputmode="numeric" />
-    <label class="field-label">Already saved ($)</label>
-    <input type="number" id="gm-saved" class="field" value="0" inputmode="numeric" />
-    <label class="field-label">Fortnight contribution ($)</label>
-    <input type="number" id="gm-contrib" class="field" placeholder="200" inputmode="numeric" />
-    <label class="field-label">Target date</label>
-    <input type="month" id="gm-date" class="field" />
+    <label class="field-label">Name</label><input type="text" id="gm-name" class="field" placeholder="e.g. Japan trip" />
+    <label class="field-label">Target ($)</label><input type="number" id="gm-target" class="field" placeholder="5000" inputmode="numeric" />
+    <label class="field-label">Already saved ($)</label><input type="number" id="gm-saved" class="field" value="0" inputmode="numeric" />
+    <label class="field-label">Fortnight contribution ($)</label><input type="number" id="gm-contrib" class="field" placeholder="200" inputmode="numeric" />
+    <label class="field-label">Target date</label><input type="month" id="gm-date" class="field" />
     <label class="field-label">Icon</label>
     <select id="gm-emoji" class="field">
       <option value="✈">✈ Holiday</option><option value="🏠">🏠 Home</option>
@@ -220,12 +222,9 @@
     <div class="sheet-handle"></div>
     <div class="sheet-title">Edit category</div>
     <input type="hidden" id="ec-id" />
-    <label class="field-label">Name</label>
-    <input type="text" id="ec-name" class="field" />
-    <label class="field-label">Fortnightly budget ($)</label>
-    <input type="number" id="ec-budget" class="field" placeholder="0 = no budget" inputmode="numeric" />
-    <label class="field-label">Icon (emoji)</label>
-    <input type="text" id="ec-icon" class="field" maxlength="2" />
+    <label class="field-label">Name</label><input type="text" id="ec-name" class="field" />
+    <label class="field-label">Fortnightly budget ($)</label><input type="number" id="ec-budget" class="field" placeholder="0 = no budget" inputmode="numeric" />
+    <label class="field-label">Icon (emoji)</label><input type="text" id="ec-icon" class="field" maxlength="2" />
     <div class="sheet-btns">
       <button class="btn-ghost" onclick="closeSheet('editcat-modal')">Cancel</button>
       <button class="btn-solid" onclick="saveCatEdit()">Save</button>
@@ -238,15 +237,28 @@
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">New category</div>
-    <label class="field-label">Name</label>
-    <input type="text" id="ac-name" class="field" placeholder="e.g. Kids" />
-    <label class="field-label">Fortnightly budget ($)</label>
-    <input type="number" id="ac-budget" class="field" placeholder="0" inputmode="numeric" />
-    <label class="field-label">Icon (emoji)</label>
-    <input type="text" id="ac-icon" class="field" placeholder="📦" maxlength="2" />
+    <label class="field-label">Name</label><input type="text" id="ac-name" class="field" placeholder="e.g. Kids" />
+    <label class="field-label">Fortnightly budget ($)</label><input type="number" id="ac-budget" class="field" placeholder="0" inputmode="numeric" />
+    <label class="field-label">Icon (emoji)</label><input type="text" id="ac-icon" class="field" placeholder="📦" maxlength="2" />
     <div class="sheet-btns">
       <button class="btn-ghost" onclick="closeSheet('addcat-modal')">Cancel</button>
       <button class="btn-solid" onclick="addCat()">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADJUST ROLLOVER BALANCE -->
+<div class="sheet-backdrop" id="rollover-adjust-modal">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="ra-title">Adjust balance</div>
+    <div class="ra-desc" id="ra-desc"></div>
+    <label class="field-label">Set balance to ($)</label>
+    <input type="number" id="ra-amount" class="field" placeholder="0" inputmode="numeric" />
+    <div class="sheet-note">You can manually adjust the rollover balance if you need to correct it — e.g. after paying a big bill from another account.</div>
+    <div class="sheet-btns">
+      <button class="btn-ghost" onclick="closeSheet('rollover-adjust-modal')">Cancel</button>
+      <button class="btn-solid" onclick="confirmAdjustRollover()">Save</button>
     </div>
   </div>
 </div>
